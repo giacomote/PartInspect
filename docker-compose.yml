@@ -1,0 +1,36 @@
+services:
+  ros2_gazebo:
+    image: osrf/ros:jazzy-desktop-full
+    container_name: partinspect-sim-ctr
+    network_mode: host
+    ipc: host
+    privileged: true
+
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+
+      # NVIDIA GPU options
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - __NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+      - __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+
+      # Other options
+      - GZ_SIM_RESOURCE_PATH=/home/ros_user/ros2_ws/src/inspection_system/models
+
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./ros2_ws:/home/ros_user/ros2_ws  # Mapping a local directory for ros workspace
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+    command: sleep infinity

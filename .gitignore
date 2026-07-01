@@ -1,0 +1,8 @@
+# Compiler outputs
+**/build
+**/install
+**/log
+
+# IDE settings
+.idea
+.vscode
