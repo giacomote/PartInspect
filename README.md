@@ -20,7 +20,7 @@ This repository and its files are provided by Giacomo Tessari (`@giacomote` on G
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For more details about the license and to view the full terms and conditions, please refer to the [LICENSE](LICENSE)
 file.
@@ -35,11 +35,11 @@ file.
     ├── README.md
     └── start.sh                # Container startup script
 
-## Testing the Project
+## 🧪 Testing the Project
 
 Note that this project is specifically made to work in a PC which is:
 - Equipped with an **NVIDIA dedicated GPU**
-- running **Fedora Linux 44**
+- Running **Fedora Linux 44**
 
 It is up to you to manage the `docker-compose.yml` file to run the container on a different system.
 
@@ -50,9 +50,10 @@ and `Gazebo Harmonic`.
 
 However, to test the project, you need to execute the following steps:
 1. Change the permissions and run the `start.sh` script:
+
 ```bash
 >> chmod u+x ./start.sh
 >> ./start.sh
 ```
 
-2. Compile ...
+1. Compile and execute ROS2 package ...
