@@ -1,6 +1,7 @@
 #include <memory>
 #include <chrono>
 #include <vector>
+#include <cmath>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float64.hpp"
 #include "std_msgs/msg/int32.hpp"
@@ -11,6 +12,9 @@ using namespace std::chrono_literals;
 class PusherNode : public rclcpp::Node {
 public:
     PusherNode() : Node("pusher_node"), current_belt_speed_(0.0), distance_to_pusher_(1.5) {
+        // Using simulation time (to avoid synchronization problems caused by low simulation performances)
+        this->set_parameter(rclcpp::Parameter("use_sim_time", true));
+
         // Subscription to the belt speed topic
         speed_sub_ = this->create_subscription<std_msgs::msg::Float64>(
             "/config/belt_speed", 10,
@@ -27,7 +31,7 @@ public:
         gazebo_pusher_pub_ = this->create_publisher<std_msgs::msg::Float64>("/gazebo/pusher/cmd_pos", 10);
 
         // Tracking timer (20Hz / 50ms), to track bad part position
-        tracking_timer_ = this->create_wall_timer(
+        tracking_timer_ = this->create_timer(
             50ms,
             std::bind(&PusherNode::track_defective_parts_callback, this)
         );
@@ -44,7 +48,7 @@ private:
 
     void vision_callback(const std_msgs::msg::Int32::SharedPtr msg) {
         if (msg->data == 1) {
-            RCLCPP_INFO(this->get_logger(), "Vision alert! Defective part detected at the start of the line.");
+            RCLCPP_INFO(this->get_logger(), "Vision alert! Defective part detected on the line.");
             
             // Adding a new bad part to be tracked (which starts from 0.0 meters and gradually reaches the solenoid)
             tracked_parts_.push_back(0.0);
@@ -56,10 +60,10 @@ private:
         double dt = (now - last_update_time_).seconds();
         last_update_time_ = now;
 
-        if (tracked_parts_.empty()) {
-            return;
-        }
+        if (dt <= 0.0 || dt > 0.5) return;
+        if (tracked_parts_.empty()) return;
 
+        current_belt_speed_ = std::abs(current_belt_speed_);
         double delta_space = current_belt_speed_ * dt;  // Distance covered by the bad part on the conveyor belt
 
         // Tracking and pushing bad parts
@@ -68,7 +72,7 @@ private:
             *it += delta_space;
 
             if (*it >= distance_to_pusher_) {
-                RCLCPP_WARN(this->get_logger(), "Part reached pusher target (%.2fm). Actuating piston!", *it);
+                RCLCPP_WARN(this->get_logger(), "Bad part reached pusher target (%.2fm). Actuating piston!", *it);
                 actuate_pusher();
                 
                 it = tracked_parts_.erase(it);
@@ -81,22 +85,23 @@ private:
     void actuate_pusher() {
         auto push_msg = std_msgs::msg::Float64();
         
-        push_msg.data = 1.0; 
+        push_msg.data = 0.15; 
         gazebo_pusher_pub_->publish(push_msg);
         
         RCLCPP_INFO(this->get_logger(), "Piston command sent!");
 
         // Creating a single-shot timer to reset the solenoid piston
-        rclcpp::SensorDataQoS qos;
-        rclcpp::create_timer(
-            this,
-            this->get_clock(),
-            std::chrono::milliseconds(500),
+        if (retract_timer_) retract_timer_->cancel();
+
+        retract_timer_ = this->create_timer(
+            500ms,
             [this]() {
                 auto retract_msg = std_msgs::msg::Float64();
                 retract_msg.data = 0.0;
                 gazebo_pusher_pub_->publish(retract_msg);
                 RCLCPP_INFO(this->get_logger(), "Piston retracted.");
+
+                retract_timer_->cancel();
             }
         );
     }
@@ -104,7 +109,9 @@ private:
     rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr speed_sub_;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr vision_sub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr gazebo_pusher_pub_;
+
     rclcpp::TimerBase::SharedPtr tracking_timer_;
+    rclcpp::TimerBase::SharedPtr retract_timer_;
 
     double current_belt_speed_;
     const double distance_to_pusher_;

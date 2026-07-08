@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<sdf version="1.10">
+  <model name='cone'>
+
+    <pose>0 0 1 0 0 0</pose>
+    <static>false</static>
+
+    <link name='cone_link'>
+      <inertial>
+        <mass>1.0600000000000001</mass>
+        <inertia>
+          <ixx>0.000795</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000795</iyy>
+          <iyz>0</iyz>
+          <izz>0.000795</izz>
+        </inertia>
+        <pose>0 0 -0.025 0 0 0</pose>
+      </inertial>
+
+      <collision name='cone_collision'>
+        <geometry>
+          <cone>
+            <radius>0.05</radius>
+            <length>0.1</length>
+          </cone>
+        </geometry>
+        <surface>
+          <friction>
+            <ode/>
+          </friction>
+          <bounce/>
+          <contact/>
+        </surface>
+      </collision>
+
+      <visual name='cone_visual'>
+        <geometry>
+          <cone>
+            <radius>0.05</radius>
+            <length>0.1</length>
+          </cone>
+        </geometry>
+        <material>
+          <ambient>0.12 0.12 0.12 1</ambient>
+          <diffuse>0.12 0.12 0.12 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+
+      <pose>0 0 0 0 0 0</pose>
+      <enable_wind>false</enable_wind>
+    </link>
+
+    <self_collide>false</self_collide>
+
+  </model>
+</sdf>

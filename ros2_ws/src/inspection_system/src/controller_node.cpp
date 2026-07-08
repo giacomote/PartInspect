@@ -1,5 +1,6 @@
 #include <memory>
 #include <chrono>
+#include <cmath>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float64.hpp"
 #include "std_msgs/msg/int32.hpp"
@@ -9,10 +10,10 @@ using namespace std::chrono_literals;
 
 class ControllerNode : public rclcpp::Node {
 public:
-    ControllerNode() : Node("controller_node"), belt_speed_(0.5) {
+    ControllerNode() : Node("controller_node"), belt_speed_(-0.5) {
         // Subscription to the control sensor topic
         check_sub_ = this->create_subscription<std_msgs::msg::Int32>(
-            "/check_node/detection_result", 10,
+            "/check/detection_result", 10,
             std::bind(&ControllerNode::check_callback, this, std::placeholders::_1)
         );
 
@@ -36,7 +37,7 @@ private:
         if (msg->data == 1) {
             RCLCPP_WARN(this->get_logger(), "Bad part detected at check point! Stopping...");
             
-            if (belt_speed_ > 0.0) {
+            if (std::abs(belt_speed_) > 0.0) {
                 belt_speed_ = 0.0;
                 RCLCPP_ERROR(this->get_logger(), "EMERGENCY STOP ENGAGED: Conveyor stopped via software!");
             }

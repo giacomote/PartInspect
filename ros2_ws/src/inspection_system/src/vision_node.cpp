@@ -39,49 +39,85 @@ private:
             return;
         }
 
-        // Gray-scale conversion, binarization and thresholding
-        cv::Mat gray, thresh;
-        cv::cvtColor(cv_ptr->image, gray, cv::COLOR_BGR2GRAY);
-        cv::threshold(gray, thresh, 120, 255, cv::THRESH_BINARY);
+        cv::Mat original_frame = cv_ptr->image;
 
-        // Finding contours and computing shape
+        // Computing a Region Of Interest (ROI)
+        int crop_x = original_frame.cols * 0.20; 
+        int crop_y = original_frame.rows * 0.25; 
+        int crop_w = original_frame.cols * 0.60;
+        int crop_h = original_frame.rows * 0.55; 
+        
+        cv::Rect roi(crop_x, crop_y, crop_w, crop_h);
+        cv::Mat cropped_frame = original_frame(roi);
+
+        // Gray-scale conversion and a little blur (to de-noise the image)
+        cv::Mat gray, blurred, binary;
+        cv::cvtColor(cropped_frame, gray, cv::COLOR_BGR2GRAY);
+        cv::GaussianBlur(gray, blurred, cv::Size(5, 5), 0);
+
+        // Inverted thresholding
+        // All dark pixels (< 80) are set to white (255)
+        // All the other pixels (> 80) are set to black (0)
+        int soglia_valore = 80;
+        cv::threshold(blurred, binary, soglia_valore, 255, cv::THRESH_BINARY_INV);
+
+        // Image Cleaning (Opening)
+        cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+        cv::morphologyEx(binary, binary, cv::MORPH_OPEN, kernel);
+
+        // --- VISUAL DEBUG ---
+        // To visualize the result of all the previous image processing operations, uncomment the following 2 lines
+        // cv::imshow("Thresholding Debug", binary);
+        // cv::waitKey(1);
+
+        // Finding contours
         std::vector<std::vector<cv::Point>> contours;
-        cv::findContours(thresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        cv::findContours(binary, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+        bool found_any_valid_object = false;
 
         for (const auto& contour : contours) {
-            if (cv::contourArea(contour) < 500) continue;
+            if (cv::contourArea(contour) < 800) continue;
 
-            // Approximating to a mathematical polygon
-            std::vector<cv::Point> approx;
-            double epsilon = 0.04 * cv::arcLength(contour, true);
-            cv::approxPolyDP(contour, approx, epsilon, true);
+            found_any_valid_object = true;
 
-            RCLCPP_INFO(
-                this->get_logger(),
-                "Detected object having AREA %f and %zu VERTICES",
-                cv::contourArea(contour), approx.size()
-            );
-            
-            auto result_msg = std_msgs::msg::Int32();
+            if (!object_currently_in_view_) {
+                std::vector<cv::Point> approx;
+                double epsilon = 0.02 * cv::arcLength(contour, true);
+                cv::approxPolyDP(contour, approx, epsilon, true);
 
-            // Classifying object, using number of vertices
-            if (approx.size() == 3) {
-                RCLCPP_WARN(this->get_logger(), "Found TRIANGLE / CONE (bad part!)");
+                RCLCPP_INFO(
+                    this->get_logger(),
+                    "Detected object having AREA %f and %zu VERTICES",
+                    cv::contourArea(contour), approx.size()
+                );
+                
+                auto result_msg = std_msgs::msg::Int32();
 
-                result_msg.data = 1;
-                result_pub_->publish(result_msg);
-            } 
-            else if (approx.size() == 4) {
-                RCLCPP_INFO(this->get_logger(), "Found SQUARE / CUBE");
+                // Classifying the shape
+                if (approx.size() == 3) {
+                    RCLCPP_WARN(this->get_logger(), "Found TRIANGLE / CONE (bad part!)");
+                    result_msg.data = 1;
+                    result_pub_->publish(result_msg);
 
-                result_msg.data = 0;
-                result_pub_->publish(result_msg);
+                    break; 
+                } 
+                else if (approx.size() >= 4 && approx.size() <= 6) {
+                    RCLCPP_INFO(this->get_logger(), "Found SQUARE / CUBE");
+                    result_msg.data = 0;
+                    result_pub_->publish(result_msg);
+
+                    break; 
+                }
             }
         }
+
+        object_currently_in_view_ = found_any_valid_object;
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr camera_sub_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr result_pub_;
+    bool object_currently_in_view_ = false;
 };
 
 

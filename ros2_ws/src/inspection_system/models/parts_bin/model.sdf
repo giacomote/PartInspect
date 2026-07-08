@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="parts_bin">
+    <static>false</static>
+
+    <link name="base">
+      <collision name="base_collision">
+        <geometry>
+          <box>
+            <size>0.6 0.4 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="base_visual">
+        <geometry>
+          <box>
+            <size>0.6 0.4 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+          <specular>0.75 0.75 0.75 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="left_wall">
+      <pose>0 0.19 0.11 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.6 0.02 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.6 0.02 0.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+          <specular>0.75 0.75 0.75 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="right_wall">
+      <pose>0 -0.19 0.11 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.6 0.02 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.6 0.02 0.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+          <specular>0.75 0.75 0.75 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="front_wall">
+      <pose>0.29 0 0.11 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.02 0.4 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.02 0.4 0.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+          <specular>0.75 0.75 0.75 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="back_wall">
+      <pose>-0.29 0 0.11 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.02 0.4 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.02 0.4 0.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+          <specular>0.75 0.75 0.75 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="left_joint" type="fixed">
+      <parent>base</parent>
+      <child>left_wall</child>
+    </joint>
+
+    <joint name="right_joint" type="fixed">
+      <parent>base</parent>
+      <child>right_wall</child>
+    </joint>
+
+    <joint name="front_joint" type="fixed">
+      <parent>base</parent>
+      <child>front_wall</child>
+    </joint>
+
+    <joint name="back_joint" type="fixed">
+      <parent>base</parent>
+      <child>back_wall</child>
+    </joint>
+
+  </model>
+</sdf>
