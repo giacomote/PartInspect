@@ -37,23 +37,56 @@ file.
 
 ## 🧪 Testing the Project
 
-Note that this project is specifically made to work in a PC which is:
-- Equipped with an **NVIDIA dedicated GPU**
-- Running **Fedora Linux 44**
+### Important Note
 
-It is up to you to manage the `docker-compose.yml` file to run the container on a different system.
+This project is designed to run on a PC that:
 
-Alternatively, you can always run the project directly on your host operating system, after you installed `ROS2 Jazzy`
-and `Gazebo Harmonic`.
+- Has a dedicated **NVIDIA GPU**
+- Is running **Fedora Linux 44**
 
----
+If you want to run it on a different system, you will need to modify the `docker-compose.yml` file accordingly.
 
-However, to test the project, you need to execute the following steps:
-1. Change the permissions and run the `start.sh` script:
+Alternatively, you can run the project directly on your host operating system, after installing `ROS2 Jazzy Jalisco`
+and `Gazebo Harmonic`. In that case, please refer to the [ROS package README file](./ros2_ws/src/inspection_system/README.md).
+
+### Testing Procedure
+
+To install and test this ROS2 package, you need to:
+
+1. Change its permissions and run the `start.sh` script to enter the container:
 
 ```bash
 >> chmod u+x ./start.sh
 >> ./start.sh
 ```
 
-1. Compile and execute ROS2 package ...
+2. Build the ROS package using `colcon`:
+
+```bash
+>> cd /home/ros_user/ros2_ws
+>> colcon build --packages-select inspection_system
+>> source install/setup.bash
+```
+
+3. Launch the complete system:
+
+```bash
+ros2 launch inspection_system inspection_system.launch.py
+```
+
+4. Start the simulation (by pressing the `Play` button on the bottom-left corner of the Gazebo window)
+
+5. Use the `Resource Spawner` to place `Small Box` and `Small Cone` objects onto the conveyor belt. These models can be
+   found under the `Local Resources` menu.
+
+## ⚙️ Simulation Overview
+
+The simulation is based on two main principles:
+
+- **Small Boxes** represent valid parts and are allowed to continue along the conveyor belt
+- **Small Cones** represent defective parts. They are automatically detected and removed from the conveyor by a
+  pneumatic pusher
+
+As a safety mechanism, a second camera is installed further along the conveyor.  
+If a defective part (a cone) is not successfully removed and reaches this checkpoint, the system detects the failure
+and automatically stops the conveyor belt.
