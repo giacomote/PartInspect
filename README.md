@@ -2,6 +2,13 @@
 
 A simulated ROS2 and Gazebo environment for automated quality inspection in manufacturing.
 
+This project simulates an industrial quality inspection cell composed of:
+
+- A **conveyor belt** transporting parts
+- A **vision system** for part identification
+- A **solenoid actuator** for rejecting defective items
+- **ROS2 nodes** coordinating perception, decision making, and actuation
+
 ## 📜 Author & License
 
 This repository and its files are provided by Giacomo Tessari (`@giacomote` on GitHub), and they are released under the
@@ -74,7 +81,7 @@ To install and test this ROS2 package, you need to:
 ros2 launch inspection_system inspection_system.launch.py
 ```
 
-4. Start the simulation (by pressing the `Play` button on the bottom-left corner of the Gazebo window)
+4. Start the simulation (by pressing the `Play` button on top of the left menu)
 
 5. Use the `Resource Spawner` to place `Small Box` and `Small Cone` objects onto the conveyor belt. These models can be
    found under the `Local Resources` menu.

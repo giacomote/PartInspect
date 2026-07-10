@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 
 class ControllerNode : public rclcpp::Node {
 public:
-    ControllerNode() : Node("controller_node"), belt_speed_(-0.5) {
+    ControllerNode() : Node("controller_node"), belt_speed_(-1.0) {
         // Subscription to the control sensor topic
         check_sub_ = this->create_subscription<std_msgs::msg::Int32>(
             "/check/detection_result", 10,

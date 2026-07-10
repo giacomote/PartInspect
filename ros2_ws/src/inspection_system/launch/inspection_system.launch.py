@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('inspection_system')
-    world_file = '/home/ros_user/ros2_ws/src/inspection_system/worlds/inspection_system_world.sdf'
+    world_file = os.path.join(pkg_share, 'worlds', 'inspection_system_world.sdf')
     bridge_config = os.path.join(pkg_share, 'config', 'bridge_config.yml')
 
     use_sim_time_arg = DeclareLaunchArgument(

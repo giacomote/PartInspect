@@ -1,10 +1,64 @@
-<sdf version='1.10'>
-  <world name='inspection_system'>
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="inspection_system">
 
-    <physics name='1ms' type='ignored'>
-      <max_step_size>0.001</max_step_size>
+    <gui fullscreen="false">
+      <plugin filename="GzScene3D" name="3D View">
+        <gz-gui>
+          <title>3D View</title>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="state" type="string">docked</property>
+        </gz-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+      </plugin>
+
+      <plugin filename="WorldControl" name="World control">
+        <gz-gui>
+          <title>World control</title>
+          <property key="showTitleBar" type="bool">true</property>
+          <property key="state" type="string">docked</property>
+        </gz-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+      </plugin>
+
+      <plugin filename="WorldStats" name="World stats">
+        <gz-gui>
+          <title>World stats</title>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="state" type="string">docked</property>
+        </gz-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+
+      <plugin filename="EntityTree" name="Entity Tree">
+        <gz-gui>
+          <title>Entity Tree</title>
+          <property key="state" type="string">docked</property>
+          <property key="visible" type="bool">true</property> 
+        </gz-gui>
+      </plugin>
+
+      <plugin filename="ResourceSpawner" name="Resource Spawner">
+        <gz-gui>
+          <title>Resource Spawner</title>
+          <property key="state" type="string">docked</property>
+          <property key="visible" type="bool">true</property>
+        </gz-gui>
+      </plugin>
+    </gui>
+
+    <physics name='4ms' type='ignored'>
+      <max_step_size>0.004</max_step_size>
       <real_time_factor>1</real_time_factor>
-      <real_time_update_rate>1000</real_time_update_rate>
+      <real_time_update_rate>250</real_time_update_rate>
     </physics>
 
     <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
@@ -23,7 +77,7 @@
     <scene>
       <ambient>0.400000006 0.400000006 0.400000006 1</ambient>
       <background>0.699999988 0.699999988 0.699999988 1</background>
-      <shadows>true</shadows>
+      <shadows>false</shadows>
     </scene>
 
     <model name='ground_plane'>
@@ -98,46 +152,6 @@
             <box>
               <size>5 0.20000000000000001 0.10000000000000001</size>
             </box>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.69999999999999996</mu>
-                <mu2>150</mu2>
-                <fdir1>0 1 0</fdir1>
-              </ode>
-            </friction>
-            <bounce/>
-            <contact/>
-          </surface>
-        </collision>
-        <collision name='collision_1'>
-          <pose relative_to='base_link'>2.5 0 0 -1.5707963270000003 0 0</pose>
-          <geometry>
-            <cylinder>
-              <length>0.20000000000000001</length>
-              <radius>0.050000000000000003</radius>
-            </cylinder>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.69999999999999996</mu>
-                <mu2>150</mu2>
-                <fdir1>0 1 0</fdir1>
-              </ode>
-            </friction>
-            <bounce/>
-            <contact/>
-          </surface>
-        </collision>
-        <collision name='collision_2'>
-          <pose relative_to='base_link'>-2.5 0 0 -1.5707963270000003 0 0</pose>
-          <geometry>
-            <cylinder>
-              <length>0.20000000000000001</length>
-              <radius>0.050000000000000003</radius>
-            </cylinder>
           </geometry>
           <surface>
             <friction>
@@ -596,7 +610,7 @@
 
     <model name='inspection_camera'>
       <static>true</static>
-      <pose>1 -0.53 0.75 0 0 1.5708</pose> 
+      <pose>1 -0.53 0.69 0 0 1.5708</pose> 
       <link name='camera_link'>
         <visual name='camera_visual'>
           <geometry><box><size>0.1 0.1 0.1</size></box></geometry>
@@ -605,7 +619,7 @@
         
         <sensor name='camera1' type='camera'>
           <topic>/model/camera1/raw_image</topic>
-          <update_rate>30</update_rate>
+          <update_rate>15</update_rate>
           <camera name='intel_cam'>
             <horizontal_fov>1.2</horizontal_fov>
             <image>
@@ -623,7 +637,7 @@
 
     <model name='check_camera'>
       <static>true</static>
-      <pose>-1 -0.53 0.75 0 0 1.5708</pose> 
+      <pose>-1.3 -0.53 0.69 0 0 1.5708</pose>
       <link name='camera_link'>
         <visual name='camera_visual'>
           <geometry><box><size>0.1 0.1 0.1</size></box></geometry>
@@ -632,7 +646,7 @@
         
         <sensor name='camera2' type='camera'>
           <topic>/model/camera2/raw_image</topic>
-          <update_rate>30</update_rate>
+          <update_rate>15</update_rate>
           <camera name='intel_cam'>
             <horizontal_fov>1.2</horizontal_fov>
             <image>

@@ -9,7 +9,7 @@
 
 class CheckNode : public rclcpp::Node {
 public:
-    CheckNode() : Node("check_node") {
+    CheckNode() : Node("check_node"), has_classified_current_object_(false) {
         auto sensor_qos = rclcpp::QoS(rclcpp::KeepLast(5)).best_effort().durability_volatile();
 
         // Subscription to the video topic (of a real camera or in Gazebo)
@@ -42,10 +42,10 @@ private:
         cv::Mat original_frame = cv_ptr->image;
 
         // Computing a Region Of Interest (ROI)
-        int crop_x = original_frame.cols * 0.20; 
-        int crop_y = original_frame.rows * 0.25; 
-        int crop_w = original_frame.cols * 0.60;
-        int crop_h = original_frame.rows * 0.55; 
+        int crop_x = original_frame.cols * 0.10; 
+        int crop_y = original_frame.rows * 0.10; 
+        int crop_w = original_frame.cols * 0.80;
+        int crop_h = original_frame.rows * 0.50;
         
         cv::Rect roi(crop_x, crop_y, crop_w, crop_h);
         cv::Mat cropped_frame = original_frame(roi);
@@ -56,19 +56,14 @@ private:
         cv::GaussianBlur(gray, blurred, cv::Size(5, 5), 0);
 
         // Inverted thresholding
-        // All dark pixels (< 80) are set to white (255)
-        // All the other pixels (> 80) are set to black (0)
-        int soglia_valore = 80;
+        // All dark pixels (< 85) are set to white (255)
+        // All the other pixels (> 85) are set to black (0)
+        int soglia_valore = 85;
         cv::threshold(blurred, binary, soglia_valore, 255, cv::THRESH_BINARY_INV);
 
         // Image Cleaning (Opening)
         cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
         cv::morphologyEx(binary, binary, cv::MORPH_OPEN, kernel);
-
-        // --- VISUAL DEBUG ---
-        // To visualize the result of all the previous image processing operations, uncomment the following 2 lines
-        // cv::imshow("Thresholding Debug", binary);
-        // cv::waitKey(1);
 
         // Finding contours
         std::vector<std::vector<cv::Point>> contours;
@@ -81,7 +76,15 @@ private:
 
             found_any_valid_object = true;
 
-            if (!object_currently_in_view_) {
+            // Computing the rectangle which contains the part and checking if it touches the border of the ROI
+            cv::Rect br = cv::boundingRect(contour);
+
+            bool is_fully_inside = (br.x > 3 && br.y > 3 && 
+                                    (br.x + br.width) < cropped_frame.cols - 3 && 
+                                    (br.y + br.height) < cropped_frame.rows - 3);
+
+            // Classifying the object (but only if it is completely inside the ROI)
+            if (is_fully_inside && !has_classified_current_object_) {
                 std::vector<cv::Point> approx;
                 double epsilon = 0.02 * cv::arcLength(contour, true);
                 cv::approxPolyDP(contour, approx, epsilon, true);
@@ -100,6 +103,7 @@ private:
                     result_msg.data = 1;
                     result_pub_->publish(result_msg);
 
+                    has_classified_current_object_ = true;
                     break; 
                 } 
                 else if (approx.size() >= 4 && approx.size() <= 6) {
@@ -107,17 +111,20 @@ private:
                     result_msg.data = 0;
                     result_pub_->publish(result_msg);
 
+                    has_classified_current_object_ = true;
                     break; 
                 }
             }
         }
 
-        object_currently_in_view_ = found_any_valid_object;
+        if (!found_any_valid_object) {
+            has_classified_current_object_ = false;
+        }
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr camera_sub_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr result_pub_;
-    bool object_currently_in_view_ = false;
+    bool has_classified_current_object_;
 };
 
 
