@@ -237,7 +237,7 @@
     </model>
 
     <model name='parts_bin'>
-      <static>false</static>
+      <static>true</static>
       <link name='base'>
         <collision name='base_collision'>
           <geometry>
@@ -619,7 +619,7 @@
         
         <sensor name='camera1' type='camera'>
           <topic>/model/camera1/raw_image</topic>
-          <update_rate>15</update_rate>
+          <update_rate>20</update_rate>
           <camera name='intel_cam'>
             <horizontal_fov>1.2</horizontal_fov>
             <image>
@@ -646,7 +646,7 @@
         
         <sensor name='camera2' type='camera'>
           <topic>/model/camera2/raw_image</topic>
-          <update_rate>15</update_rate>
+          <update_rate>20</update_rate>
           <camera name='intel_cam'>
             <horizontal_fov>1.2</horizontal_fov>
             <image>

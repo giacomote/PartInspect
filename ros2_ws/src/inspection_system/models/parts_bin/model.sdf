@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
   <model name="parts_bin">
-    <static>false</static>
+    <static>true</static>
+    <pose>0 0 0.0088398000225424767 0 0 0</pose>
 
     <link name="base">
       <collision name="base_collision">
