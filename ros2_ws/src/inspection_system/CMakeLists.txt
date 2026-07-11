@@ -16,6 +16,8 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(ros_gz_interfaces REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
@@ -72,6 +74,14 @@ ament_target_dependencies(controller_node
   std_msgs
 )
 
+# Cleaner node
+add_executable(cleaner_node src/cleaner_node.cpp)
+ament_target_dependencies(cleaner_node
+  rclcpp
+  nav_msgs
+  ros_gz_interfaces
+)
+
 # -------------------------
 # ----- Install Rules -----
 # -------------------------
@@ -82,6 +92,7 @@ install(TARGETS
   dummy_camera_node
   pusher_node
   controller_node
+  cleaner_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

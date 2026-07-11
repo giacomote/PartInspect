@@ -32,3 +32,16 @@
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
+
+# Objects position logging
+- ros_topic_name: "/gazebo/spawned_objects/odometry"
+  gz_topic_name: "/gazebo/spawned_objects/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
+# Object deletion topic
+- service_name: "/world/inspection_system/remove"
+  ros_type_name: "ros_gz_interfaces/srv/DeleteEntity"
+  gz_req_type_name: "gz.msgs.Entity"
+  gz_rep_type_name: "gz.msgs.Boolean"

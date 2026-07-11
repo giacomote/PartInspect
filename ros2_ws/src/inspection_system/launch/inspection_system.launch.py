@@ -70,6 +70,14 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time_config}],
         output='screen'
     )
+
+    cleaner_node = Node(
+        package='inspection_system',
+        executable='cleaner_node',
+        name='cleaner',
+        parameters=[{'use_sim_time': use_sim_time_config}],
+        output='screen'
+    )
     
     # Returning All
     return LaunchDescription([
@@ -79,5 +87,6 @@ def generate_launch_description():
         vision_node,
         controller_node,
         pusher_node,
-        check_node
+        check_node,
+        cleaner_node
     ])
