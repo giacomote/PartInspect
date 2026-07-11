@@ -37,7 +37,7 @@ file.
     PartInspect/
     ├── ros2_ws/                # Shared ROS2 container workspace
     ├── .gitignore
-    ├── docker-compose.yml      # Docker containers settings
+    ├── docker-compose.yml      # Docker container settings
     ├── LICENSE
     ├── README.md
     └── start.sh                # Container startup script
@@ -46,7 +46,7 @@ file.
 
 ### Important Note
 
-This project is designed to run on a PC that:
+This project is designed to run inside a Docker container on a machine that:
 
 - Has a dedicated **NVIDIA GPU**
 - Is running **Fedora Linux 44**
