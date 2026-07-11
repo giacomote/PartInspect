@@ -81,7 +81,7 @@ To install and test this ROS2 package, you need to:
 ros2 launch inspection_system inspection_system.launch.py
 ```
 
-4. Start the simulation (by pressing the `Play` button on top of the left menu)
+4. Start the simulation (by pressing the `Play` button on top of the right sidebar menu)
 
 5. Use the `Resource Spawner` to place `Small Box` and `Small Cone` objects onto the conveyor belt. These models can be
    found under the `Local Resources` menu.
@@ -97,3 +97,5 @@ The simulation is based on two main principles:
 As a safety mechanism, a second camera is installed further along the conveyor.  
 If a defective part (a cone) is not successfully removed and reaches this checkpoint, the system detects the failure
 and automatically stops the conveyor belt.
+
+Objects that fall off the conveyor automatically disappear from the simulation after a few seconds.

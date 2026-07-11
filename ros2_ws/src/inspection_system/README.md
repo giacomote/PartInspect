@@ -83,7 +83,7 @@ export GZ_SIM_RESOURCE_PATH=<ros2_workspace>/ros2_ws/src/inspection_system/model
 ros2 launch inspection_system inspection_system.launch.py
 ```
 
-5. Start the simulation (by pressing the `Play` button on top of the left menu)
+5. Start the simulation (by pressing the `Play` button on top of the right sidebar menu)
 
 6. Use the `Resource Spawner` to place `Small Box` and `Small Cone` objects onto the conveyor belt. These models can be
    found under the `Local Resources` menu.
@@ -99,3 +99,5 @@ The simulation is based on two main principles:
 As a safety mechanism, a second camera is installed further along the conveyor.  
 If a defective part (a cone) is not successfully removed and reaches this checkpoint, the system detects the failure
 and automatically stops the conveyor belt.
+
+Objects that fall off the conveyor automatically disappear from the simulation after a few seconds.
