@@ -24,11 +24,11 @@ public:
 
 private:
     void publish_fake_image() {
-        cv::Mat frame(400, 400, CV_8UC3, cv::Scalar(200, 200, 200));
+        cv::Mat frame(480, 640, CV_8UC3, cv::Scalar(200, 200, 200));
         
         switch (state_) {
             case 0:  // SQUARE
-                cv::rectangle(frame, cv::Point(100, 100), cv::Point(300, 300), cv::Scalar(0, 0, 0), -1);
+                cv::rectangle(frame, cv::Point(240, 100), cv::Point(400, 240), cv::Scalar(0, 0, 0), -1);
                 RCLCPP_INFO(this->get_logger(), "[STATE 0] Publishing a SQUARE...");
                 state_ = 1;
                 break;
@@ -40,11 +40,15 @@ private:
 
             case 2:  // TRIANGLE
                 {
-                    std::vector<cv::Point> triangle_points = { cv::Point(200, 100), cv::Point(100, 300), cv::Point(300, 300) };
+                    std::vector<cv::Point> triangle_points = { 
+                        cv::Point(320, 100),
+                        cv::Point(220, 240),
+                        cv::Point(420, 240)
+                    };
                     std::vector<std::vector<cv::Point>> pts = { triangle_points };
                     cv::fillPoly(frame, pts, cv::Scalar(0, 0, 0));
                 }
-                RCLCPP_INFO(this->get_logger(), "[STATE 2] Publishing a TRIANGLE...");
+                RCLCPP_INFO(this->get_logger(), "[STATE 2] Publishing a TRIANGLE in ROI...");
                 state_ = 3;
                 break;
 
