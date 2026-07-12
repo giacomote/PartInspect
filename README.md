@@ -35,6 +35,7 @@ file.
 ## 📂 Project Structure
 
     PartInspect/
+    ├── docs/                   # Additional documentation (slideshow)
     ├── ros2_ws/                # Shared ROS2 container workspace
     ├── .gitignore
     ├── docker-compose.yml      # Docker container settings

@@ -50,7 +50,7 @@ private:
         cv::Rect roi(crop_x, crop_y, crop_w, crop_h);
         cv::Mat cropped_frame = original_frame(roi);
 
-        // Gray-scale conversion and a little blur (to de-noise the image)
+        // Grayscale conversion and a little blur (to de-noise the image)
         cv::Mat gray, blurred, binary;
         cv::cvtColor(cropped_frame, gray, cv::COLOR_BGR2GRAY);
         cv::GaussianBlur(gray, blurred, cv::Size(5, 5), 0);
@@ -58,8 +58,8 @@ private:
         // Inverted thresholding
         // All dark pixels (< 85) are set to white (255)
         // All the other pixels (> 85) are set to black (0)
-        int soglia_valore = 85;
-        cv::threshold(blurred, binary, soglia_valore, 255, cv::THRESH_BINARY_INV);
+        int threshold_value = 85;
+        cv::threshold(blurred, binary, threshold_value, 255, cv::THRESH_BINARY_INV);
 
         // Image Cleaning (Opening)
         cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
@@ -88,7 +88,7 @@ private:
                                     (br.x + br.width) < cropped_frame.cols - 3 && 
                                     (br.y + br.height) < cropped_frame.rows - 3);
 
-            // Classifying the object (but only if it is completely inside the ROI)
+            // Classifying the object (only if it is completely inside the ROI)
             if (is_fully_inside && !has_classified_current_object_) {
                 cv::imshow("Classification Frame", binary);  // Showing the classification image
 
